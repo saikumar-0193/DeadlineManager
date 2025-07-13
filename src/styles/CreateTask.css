@@ -1,0 +1,73 @@
+.create-task-wrapper {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(to right, #c9d6ff, #e2e2e2);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  animation: fadeIn 1s ease;
+}
+
+.create-task-form {
+  background: #ffffffee;
+  padding: 2.5rem 3rem;
+  border-radius: 16px;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+  width: 420px;
+  backdrop-filter: blur(6px);
+  animation: slideUp 0.5s ease;
+}
+
+.create-task-form h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #244c78;
+  font-weight: 600;
+}
+
+.create-task-form input,
+.create-task-form textarea {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 1.2rem;
+  border: 1px solid #b2c8e3;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background-color: #f6faff;
+}
+
+.create-task-form input:focus,
+.create-task-form textarea:focus {
+  outline: none;
+  border-color: #6fa8dc;
+  box-shadow: 0 0 8px rgba(111, 168, 220, 0.3);
+}
+
+.create-task-form button {
+  width: 100%;
+  padding: 12px;
+  background: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.create-task-form button:hover {
+  background: #3b7ac9;
+  transform: translateY(-2px);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}

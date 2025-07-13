@@ -1,0 +1,27 @@
+.task-item {
+  background: #f7f9fc;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+}
+
+.task-item:hover {
+  transform: translateY(-2px);
+}
+
+.task-item h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #2c3e50;
+}
+
+.task-item p {
+  margin: 0.5rem 0;
+  color: #555;
+}
+
+.task-item small {
+  color: #888;
+}
