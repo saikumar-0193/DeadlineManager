@@ -1,14 +1,22 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/CreateTask.css';
 
-const CreateTask = () => {
+const EditTask = () => {
   const navigate = useNavigate();
-  const [task, setTask] = useState({
-    title: '',
-    description: '',
-    deadline: '',
-  });
+  const [task, setTask] = useState({ title: '', description: '', deadline: '' });
+  const [editIndex, setEditIndex] = useState(null);
+
+  useEffect(() => {
+    const index = parseInt(localStorage.getItem('editIndex'), 10);
+    const storedTasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    if (index >= 0 && storedTasks[index]) {
+      setEditIndex(index);
+      setTask(storedTasks[index]);
+    } else {
+      navigate('/dashboard'); // invalid index fallback
+    }
+  }, [navigate]);
 
   const handleChange = (e) => {
     setTask({ ...task, [e.target.name]: e.target.value });
@@ -16,40 +24,24 @@ const CreateTask = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    if (!task.title || !task.description || !task.deadline) {
-      alert('Please fill in all fields.');
-      return;
-    }
-
     const storedTasks = JSON.parse(localStorage.getItem('tasks')) || [];
-
-    const newTask = {
-      title: task.title,
-      description: task.description,
-      deadline: task.deadline,
-      completed: false, // ✅ Add the missing property here
-    };
-
-    const updatedTasks = [...storedTasks, newTask];
-    localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+    storedTasks[editIndex] = task;
+    localStorage.setItem('tasks', JSON.stringify(storedTasks));
     navigate('/dashboard');
   };
 
   return (
     <div className="create-task-wrapper">
       <form className="create-task-form" onSubmit={handleSubmit}>
-        <h2>Create a New Task</h2>
+        <h2>Edit Task</h2>
         <input
           type="text"
           name="title"
-          placeholder="Task Title"
           value={task.title}
           onChange={handleChange}
         />
         <textarea
           name="description"
-          placeholder="Task Description"
           value={task.description}
           onChange={handleChange}
         />
@@ -59,10 +51,10 @@ const CreateTask = () => {
           value={task.deadline}
           onChange={handleChange}
         />
-        <button type="submit">Add Task</button>
+        <button type="submit">Save Changes</button>
       </form>
     </div>
   );
 };
 
-export default CreateTask;
+export default EditTask;

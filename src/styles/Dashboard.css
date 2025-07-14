@@ -16,18 +16,33 @@ body {
   align-items: center;
   margin-bottom: 2rem;
 }
-
 .logo {
-  font-size: 1.8rem;
-  font-weight: bold;
-  color: #2c3e50;
   display: flex;
   align-items: center;
+  gap: 12px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.logo-circle {
+  width: 40px;
+  height: 40px;
+  background: #4a90e2;
+  color: white;
+  font-weight: bold;
+  font-size: 1.1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .logo span {
-  margin-left: 0.5rem;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #2c3e50;
 }
+
 
 .create-btn {
   background: #4a90e2;
