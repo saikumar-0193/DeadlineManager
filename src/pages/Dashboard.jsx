@@ -8,22 +8,52 @@ const Dashboard = () => {
   const [tasks, setTasks] = useState([]);
   const navigate = useNavigate();
 
+  // Toggle task completion
   const handleToggleComplete = (index) => {
-    const updatedTasks = [...tasks];
-    updatedTasks[index].completed = !updatedTasks[index].completed;
-    setTasks(updatedTasks);
-    localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+    const allTasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    const activeTasks = allTasks.filter(task => !task.completed);
+
+    // Update the task in full list
+    const taskToUpdate = activeTasks[index];
+    taskToUpdate.completed = true;
+
+    // Replace updated task in allTasks
+    const updatedAllTasks = allTasks.map(task =>
+      task.title === taskToUpdate.title &&
+      task.description === taskToUpdate.description &&
+      task.deadline === taskToUpdate.deadline
+        ? { ...taskToUpdate }
+        : task
+    );
+
+    localStorage.setItem('tasks', JSON.stringify(updatedAllTasks));
+
+    // Refresh only uncompleted tasks in dashboard view
+    setTasks(updatedAllTasks.filter(task => !task.completed));
   };
 
+  // Load only uncompleted tasks on mount
   useEffect(() => {
     const storedTasks = JSON.parse(localStorage.getItem('tasks')) || [];
-    setTasks(storedTasks);
+    const activeTasks = storedTasks.filter(task => !task.completed);
+    setTasks(activeTasks);
   }, []);
 
+  // Delete from allTasks
   const handleDeleteTask = (indexToDelete) => {
-    const updatedTasks = tasks.filter((_, index) => index !== indexToDelete);
-    setTasks(updatedTasks);
-    localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+    const allTasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    const taskToDelete = tasks[indexToDelete];
+
+    const updatedAllTasks = allTasks.filter(task =>
+      !(task.title === taskToDelete.title &&
+        task.description === taskToDelete.description &&
+        task.deadline === taskToDelete.deadline)
+    );
+
+    localStorage.setItem('tasks', JSON.stringify(updatedAllTasks));
+
+    const updatedActiveTasks = tasks.filter((_, index) => index !== indexToDelete);
+    setTasks(updatedActiveTasks);
   };
 
   const handleEditTask = (indexToEdit) => {
@@ -45,12 +75,18 @@ const Dashboard = () => {
       </div>
 
       <div className="task-section">
-        <h1>My Tasks</h1>
+        <div className="task-section-header">
+          <h1>My Tasks</h1>
+          <button className="completed-btn" onClick={() => navigate('/completed-tasks')}>
+            ✅ Completed
+          </button>
+        </div>
+
         <TaskList
           tasks={tasks}
           onDeleteTask={handleDeleteTask}
           onEditTask={handleEditTask}
-          onToggleComplete={handleToggleComplete}  // ✅ Required to fix the error
+          onToggleComplete={handleToggleComplete}
         />
       </div>
     </div>

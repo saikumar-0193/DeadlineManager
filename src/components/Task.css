@@ -1,4 +1,11 @@
-/* Task Grid */
+/* Grid layout for tasks */
+/* Apply font to the entire task section */
+.task-list,
+.task-card,
+.task-card * {
+  font-family: 'Poppins', sans-serif;
+}
+
 .task-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -6,24 +13,26 @@
   padding: 1rem;
 }
 
-/* Task Card with glass + blue highlight */
+/* Task Card - Glassmorphism style with subtle blue glow */
 .task-card {
-  background: linear-gradient(135deg, #e3f0ff 0%, #fdfdfd 100%);
-  border-left: 5px solid #4a90e2;
-  backdrop-filter: blur(10px);
-  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.25);
+  border-left: 6px solid #4a90e2;
+  backdrop-filter: blur(12px);
+  border-radius: 18px;
   padding: 1.8rem;
-  box-shadow: 0 10px 30px rgba(74, 144, 226, 0.1);
+  box-shadow: 0 10px 30px rgba(74, 144, 226, 0.15);
   transition: all 0.3s ease;
   position: relative;
+  overflow: hidden;
 }
 
+/* Hover lift effect */
 .task-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 14px 40px rgba(74, 144, 226, 0.2);
+  box-shadow: 0 16px 40px rgba(74, 144, 226, 0.25);
 }
 
-/* Header: Title + Deadline */
+/* Task Header: Title and Deadline */
 .task-header {
   display: flex;
   justify-content: space-between;
@@ -32,42 +41,39 @@
 }
 
 .task-header h3 {
-  font-size: 1.3rem;
-  color: #244c78;
-  margin: 0;
   font-weight: 600;
+  font-size: 1.3rem;
+}
+
+.task-card p {
+  font-weight: 400;
+  font-size: 1rem;
+  font-style: normal;
 }
 
 .deadline {
-  color: #4a90e2;
-  font-size: 0.85rem;
+  font-style: italic;
   font-weight: 500;
 }
 
-/* Description */
-.task-card p {
-  font-size: 1rem;
-  color: #2c3e50;
-  margin-bottom: 1rem;
-  line-height: 1.5;
-}
 
-/* Time Left Badge */
+/* Urgency Badge */
 .time-left-badge {
-  background-color: #4a90e2;
+  background-color: #ff6b6b;
   color: white;
-  padding: 5px 10px;
-  border-radius: 20px;
+  padding: 6px 12px;
+  border-radius: 999px;
   font-size: 0.75rem;
   font-weight: 600;
   display: inline-block;
   margin-bottom: 0.8rem;
+  box-shadow: 0 0 10px rgba(255, 107, 107, 0.2);
 }
 
-/* Actions */
+/* Action buttons (complete, edit, delete) */
 .task-actions {
   display: flex;
-  gap: 16px;
+  gap: 14px;
   justify-content: flex-end;
   margin-top: 1rem;
 }
@@ -77,37 +83,41 @@
   border: none;
   border-radius: 50%;
   padding: 10px;
-  font-size: 1.5rem;
   color: #4a90e2;
-  box-shadow: 0 4px 10px rgba(74, 144, 226, 0.15);
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2);
   cursor: pointer;
   transition: transform 0.2s ease, background 0.2s ease;
 }
 
 .task-actions button:hover {
-  background: #e6f0ff;
+  background: #dceeff;
   transform: scale(1.2);
 }
 
-/* Completed Task */
+/* Completed Task Style */
 .task-completed {
-  background: #f0f4f8;
-  opacity: 0.6;
-  text-decoration: line-through;
+  background: #d4f9d4;
+  border-left: 6px solid #27ae60;
+  color: #1e3a5f;
+  opacity: 0.8;
 }
 
-.task-completed p {
+.task-completed p,
+.task-completed h3 {
   text-decoration: line-through;
+  color: #2f4f4f;
 }
 
-/* Empty State */
+/* Urgent Task Background */
+.red-background {
+  background: #ffeaea !important;
+  border-left: 6px solid #ff4e4e !important;
+}
+
+/* Empty task list message */
 .empty-msg {
   text-align: center;
   font-size: 1.1rem;
   color: #778ca3;
   margin-top: 3rem;
-}
-.red-background {
-  background-color: #ffe5e5 !important;
-  border-left: 6px solid #ff4e4e;
 }

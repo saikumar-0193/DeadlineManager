@@ -2,20 +2,24 @@ body {
   margin: 0;
   padding: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(to right, #c9d6ff, #e2e2e2); /* soft blue background */
 }
 
+/* Container for entire dashboard */
 .dashboard-container {
   min-height: 100vh;
-  background: linear-gradient(to right, #c9d6ff, #e2e2e2); /* soft blue background */
   padding: 2rem;
 }
 
+/* Header at the top */
 .dashboard-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
 }
+
+/* Logo section */
 .logo {
   display: flex;
   align-items: center;
@@ -43,7 +47,7 @@ body {
   color: #2c3e50;
 }
 
-
+/* New Task Button */
 .create-btn {
   background: #4a90e2;
   color: white;
@@ -61,6 +65,7 @@ body {
   transform: scale(1.02);
 }
 
+/* Task container box */
 .task-section {
   background: #ffffffee;
   padding: 2rem;
@@ -70,8 +75,35 @@ body {
   margin: auto;
 }
 
-.task-section h1 {
-  text-align: center;
+/* Header row for "My Tasks" + Completed Button */
+.task-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 1.5rem;
+}
+
+.task-section-header h1 {
+  font-size: 1.8rem;
+  font-weight: 600;
   color: #244c78;
+  margin: 0;
+}
+
+/* Completed Button */
+.completed-btn {
+  padding: 8px 14px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  background-color: #e3ffe6;
+  color: #27ae60;
+  border: 1px solid #b2f2c2;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.completed-btn:hover {
+  background-color: #c2f7ce;
+  transform: scale(1.05);
 }
