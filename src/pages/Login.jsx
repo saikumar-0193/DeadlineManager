@@ -7,9 +7,28 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (email && password) {
-      navigate('/dashboard');
+      try {
+        const response = await fetch('http://localhost:5000/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          alert('Login successful!');
+          localStorage.setItem('user', JSON.stringify(data.user)); // store logged-in user
+          navigate('/dashboard');
+        } else {
+          alert(data.message || 'Login failed');
+        }
+      } catch (err) {
+        alert('Error connecting to server');
+        console.error(err);
+      }
     } else {
       alert('Please enter email and password');
     }

@@ -1,4 +1,5 @@
-import { useState } from 'react';
+// src/pages/CreateTask.jsx
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/CreateTask.css';
 
@@ -10,11 +11,24 @@ const CreateTask = () => {
     deadline: '',
   });
 
+  const [userEmail, setUserEmail] = useState('');
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const email = user?.email;
+    if (!email) {
+      alert('Please log in to create tasks.');
+      navigate('/login');
+    } else {
+      setUserEmail(email);
+    }
+  }, [navigate]);
+
   const handleChange = (e) => {
     setTask({ ...task, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!task.title || !task.description || !task.deadline) {
@@ -22,18 +36,29 @@ const CreateTask = () => {
       return;
     }
 
-    const storedTasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    try {
+      const response = await fetch('http://localhost:5000/api/tasks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...task,
+          email: userEmail,
+        }),
+      });
 
-    const newTask = {
-      title: task.title,
-      description: task.description,
-      deadline: task.deadline,
-      completed: false, // ✅ Add the missing property here
-    };
+      const result = await response.json();
 
-    const updatedTasks = [...storedTasks, newTask];
-    localStorage.setItem('tasks', JSON.stringify(updatedTasks));
-    navigate('/dashboard');
+      if (response.ok) {
+        navigate('/dashboard');
+      } else {
+        alert(result.message || 'Failed to create task.');
+      }
+    } catch (error) {
+      console.error('Error creating task:', error);
+      alert('Server error. Please try again later.');
+    }
   };
 
   return (

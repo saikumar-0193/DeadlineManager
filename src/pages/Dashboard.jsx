@@ -1,4 +1,3 @@
-// src/pages/Dashboard.js
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TaskList from '../components/TaskList';
@@ -8,56 +7,53 @@ const Dashboard = () => {
   const [tasks, setTasks] = useState([]);
   const navigate = useNavigate();
 
-  // Toggle task completion
-  const handleToggleComplete = (index) => {
-    const allTasks = JSON.parse(localStorage.getItem('tasks')) || [];
-    const activeTasks = allTasks.filter(task => !task.completed);
+  const user = JSON.parse(localStorage.getItem('user'));
+  const userEmail = user?.email;
 
-    // Update the task in full list
-    const taskToUpdate = activeTasks[index];
-    taskToUpdate.completed = true;
+  const fetchTasks = async () => {
+    try {
+      const res = await fetch(`http://localhost:5000/api/tasks/${userEmail}`);
+      const data = await res.json();
 
-    // Replace updated task in allTasks
-    const updatedAllTasks = allTasks.map(task =>
-      task.title === taskToUpdate.title &&
-      task.description === taskToUpdate.description &&
-      task.deadline === taskToUpdate.deadline
-        ? { ...taskToUpdate }
-        : task
-    );
-
-    localStorage.setItem('tasks', JSON.stringify(updatedAllTasks));
-
-    // Refresh only uncompleted tasks in dashboard view
-    setTasks(updatedAllTasks.filter(task => !task.completed));
+      // Check if response contains 'tasks' array
+      if (Array.isArray(data.tasks)) {
+        setTasks(data.tasks.filter(task => !task.completed));
+      } else {
+        console.error("Unexpected response format:", data);
+        setTasks([]); // fallback
+      }
+    } catch (err) {
+      console.error("Error fetching tasks:", err);
+    }
   };
 
-  // Load only uncompleted tasks on mount
   useEffect(() => {
-    const storedTasks = JSON.parse(localStorage.getItem('tasks')) || [];
-    const activeTasks = storedTasks.filter(task => !task.completed);
-    setTasks(activeTasks);
+    if (!userEmail) {
+      navigate('/login');
+      return;
+    }
+    fetchTasks();
   }, []);
 
-  // Delete from allTasks
-  const handleDeleteTask = (indexToDelete) => {
-    const allTasks = JSON.parse(localStorage.getItem('tasks')) || [];
-    const taskToDelete = tasks[indexToDelete];
-
-    const updatedAllTasks = allTasks.filter(task =>
-      !(task.title === taskToDelete.title &&
-        task.description === taskToDelete.description &&
-        task.deadline === taskToDelete.deadline)
-    );
-
-    localStorage.setItem('tasks', JSON.stringify(updatedAllTasks));
-
-    const updatedActiveTasks = tasks.filter((_, index) => index !== indexToDelete);
-    setTasks(updatedActiveTasks);
+  const handleToggleComplete = async (index) => {
+    const updated = { ...tasks[index], completed: true };
+    await fetch(`http://localhost:5000/api/tasks/${userEmail}/${index}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updated),
+    });
+    fetchTasks();
   };
 
-  const handleEditTask = (indexToEdit) => {
-    localStorage.setItem('editIndex', indexToEdit);
+  const handleDeleteTask = async (index) => {
+    await fetch(`http://localhost:5000/api/tasks/${userEmail}/${index}`, {
+      method: 'DELETE',
+    });
+    fetchTasks();
+  };
+
+  const handleEditTask = (index) => {
+    localStorage.setItem('editIndex', index);
     navigate('/edit-task');
   };
 
@@ -68,9 +64,14 @@ const Dashboard = () => {
           <div className="logo-circle">DM</div>
           <span>Deadline Manager</span>
         </div>
-
         <button className="create-btn" onClick={() => navigate('/create-task')}>
           + New Task
+        </button>
+        <button className="logout-btn" onClick={() => {
+          localStorage.removeItem('user');
+          navigate('/login');
+        }}>
+          Logout
         </button>
       </div>
 

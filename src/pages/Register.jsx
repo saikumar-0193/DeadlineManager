@@ -8,9 +8,27 @@ const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     if (name && email && password) {
-      navigate('/');
+      try {
+        const response = await fetch('http://localhost:5000/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, password }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          alert('Registration successful!');
+          navigate('/'); // Navigate to login page
+        } else {
+          alert(data.message || 'Registration failed');
+        }
+      } catch (err) {
+        alert('Error connecting to server');
+        console.error(err);
+      }
     } else {
       alert('Please fill all fields');
     }
@@ -18,10 +36,7 @@ const Register = () => {
 
   return (
     <div className="register-wrapper">
-     
       <form className="register-box">
-        
-
         <h2>Register</h2>
         <input
           type="text"
