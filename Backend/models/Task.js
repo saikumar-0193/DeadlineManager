@@ -5,7 +5,7 @@ const taskSchema = new mongoose.Schema({
   description: String,
   deadline: String,
   completed: Boolean,
-  email: String, // add this line
+  email: String, 
 });
 
 module.exports = mongoose.model('Task', taskSchema);

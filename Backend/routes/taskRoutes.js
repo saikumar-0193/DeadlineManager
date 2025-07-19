@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const Task = require('../models/Task');
 
-// GET tasks by user
 router.get('/:email', async (req, res) => {
   const { email } = req.params;
   try {
@@ -13,7 +12,6 @@ router.get('/:email', async (req, res) => {
   }
 });
 
-// CREATE task
 router.post('/', async (req, res) => {
   const { title, description, deadline, email } = req.body;
   try {
@@ -25,7 +23,6 @@ router.post('/', async (req, res) => {
   }
 });
 
-// PUT (update) task
 router.put('/:email/:id', async (req, res) => {
   const { id } = req.params;
   try {
@@ -36,7 +33,6 @@ router.put('/:email/:id', async (req, res) => {
   }
 });
 
-// DELETE task
 router.delete('/:email/:id', async (req, res) => {
   const { id } = req.params;
   try {
