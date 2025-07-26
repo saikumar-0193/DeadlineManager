@@ -9,6 +9,11 @@ const Register = () => {
   const [password, setPassword] = useState('');
 
   const handleRegister = async () => {
+    console.log('Register button clicked');
+    console.log('Name:', name);
+    console.log('Email:', email);
+    console.log('Password:', password);
+
     if (name && email && password) {
       try {
         const response = await fetch('http://localhost:5000/api/auth/register', {
@@ -17,7 +22,10 @@ const Register = () => {
           body: JSON.stringify({ name, email, password }),
         });
 
+        console.log('Server responded with status:', response.status);
+
         const data = await response.json();
+        console.log('Response data:', data);
 
         if (response.ok) {
           alert('Registration successful!');
@@ -26,8 +34,8 @@ const Register = () => {
           alert(data.message || 'Registration failed');
         }
       } catch (err) {
+        console.error('Error while registering:', err);
         alert('Error connecting to server');
-        console.error(err);
       }
     } else {
       alert('Please fill all fields');
@@ -36,7 +44,7 @@ const Register = () => {
 
   return (
     <div className="register-wrapper">
-      <form className="register-box">
+      <form className="register-box" onSubmit={(e) => e.preventDefault()}>
         <h2>Register</h2>
         <input
           type="text"

@@ -2,21 +2,25 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
-const taskRoutes = require('./routes/taskRoutes'); // ✅ Corrected
+const taskRoutes = require('./routes/taskRoutes');
 
 const app = express();
 
+// Middlewares
 app.use(cors());
 app.use(express.json());
 
 // Routes
-app.use('/api/auth', authRoutes);  // login/register
-app.use('/api/tasks', taskRoutes); // tasks
+app.use('/api/auth', authRoutes);      // login & register
+app.use('/api/tasks', taskRoutes);     // create & fetch tasks
 
+// MongoDB connection
 mongoose.connect('mongodb://localhost:27017/deadline-manager', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-}).then(() => {
-  console.log('MongoDB connected');
-  app.listen(5000, () => console.log('Server running on http://localhost:5000'));
-}).catch((err) => console.error('MongoDB connection error:', err));
+})
+.then(() => {
+  console.log('✅ MongoDB connected');
+  app.listen(5000, () => console.log('🚀 Server running on http://localhost:5000'));
+})
+.catch((err) => console.error('❌ MongoDB connection error:', err));
