@@ -1,45 +1,49 @@
+// routes/taskRoutes.js
 const express = require('express');
 const router = express.Router();
 const Task = require('../models/Task');
+const User = require('../models/User');
 
-router.get('/:email', async (req, res) => {
-  const { email } = req.params;
-  try {
-    const tasks = await Task.find({ email });
-    res.json(tasks);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
+// POST: Create a new task
 router.post('/', async (req, res) => {
   const { title, description, deadline, email } = req.body;
+
+  if (!title || !description || !deadline || !email) {
+    return res.status(400).json({ message: 'All fields are required.' });
+  }
+
   try {
-    const newTask = new Task({ title, description, deadline, completed: false, email });
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    const newTask = new Task({
+      title,
+      description,
+      deadline,
+      userId: user._id,
+    });
+
     await newTask.save();
-    res.status(201).json(newTask);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(201).json({ message: 'Task created successfully.' });
+  } catch (error) {
+    console.error('Error creating task:', error);
+    res.status(500).json({ message: 'Internal server error.' });
   }
 });
 
-router.put('/:email/:id', async (req, res) => {
-  const { id } = req.params;
-  try {
-    const updatedTask = await Task.findByIdAndUpdate(id, req.body, { new: true });
-    res.json(updatedTask);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
+// GET: Fetch tasks for a specific user
+router.get('/:email', async (req, res) => {
+  const { email } = req.params;
 
-router.delete('/:email/:id', async (req, res) => {
-  const { id } = req.params;
   try {
-    await Task.findByIdAndDelete(id);
-    res.json({ message: 'Task deleted' });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    const tasks = await Task.find({ userId: user._id }).sort({ deadline: 1 });
+    res.status(200).json({ tasks }); // 🔧 Wrap tasks in an object for consistency
+  } catch (error) {
+    console.error('Error fetching tasks:', error);
+    res.status(500).json({ message: 'Internal server error.' });
   }
 });
 

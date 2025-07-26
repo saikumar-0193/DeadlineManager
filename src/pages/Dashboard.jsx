@@ -1,97 +1,82 @@
+// src/pages/Dashboard.js
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import TaskList from '../components/TaskList';
 import '../styles/Dashboard.css';
 
-const Dashboard = () => {
-  const [tasks, setTasks] = useState([]);
+function Dashboard() {
   const navigate = useNavigate();
-
-  const user = JSON.parse(localStorage.getItem('user'));
-  const userEmail = user?.email;
-
-  const fetchTasks = async () => {
-    try {
-      const res = await fetch(`http://localhost:5000/api/tasks/${userEmail}`);
-      const data = await res.json();
-
-      // Check if response contains 'tasks' array
-      if (Array.isArray(data.tasks)) {
-        setTasks(data.tasks.filter(task => !task.completed));
-      } else {
-        console.error("Unexpected response format:", data);
-        setTasks([]); // fallback
-      }
-    } catch (err) {
-      console.error("Error fetching tasks:", err);
-    }
-  };
+  const [tasks, setTasks] = useState([]);
+  const [email, setEmail] = useState('');
 
   useEffect(() => {
-    if (!userEmail) {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user?.email) {
       navigate('/login');
       return;
     }
-    fetchTasks();
-  }, []);
+    setEmail(user.email);
+    fetchTasks(user.email);
+  }, [navigate]);
 
-  const handleToggleComplete = async (index) => {
-    const updated = { ...tasks[index], completed: true };
-    await fetch(`http://localhost:5000/api/tasks/${userEmail}/${index}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(updated),
-    });
-    fetchTasks();
+  const fetchTasks = async (userEmail) => {
+    try {
+      const res = await fetch(`http://localhost:5000/api/tasks/${userEmail}`);
+      const data = await res.json();
+      if (Array.isArray(data.tasks)) {
+        setTasks(data.tasks);
+      } else {
+        setTasks([]);
+      }
+    } catch (err) {
+      console.error('Failed to fetch tasks:', err);
+    }
   };
 
-  const handleDeleteTask = async (index) => {
-    await fetch(`http://localhost:5000/api/tasks/${userEmail}/${index}`, {
-      method: 'DELETE',
-    });
-    fetchTasks();
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    navigate('/login');
   };
 
-  const handleEditTask = (index) => {
-    localStorage.setItem('editIndex', index);
-    navigate('/edit-task');
+  const handleCreateTask = () => {
+    navigate('/create-task');
   };
 
   return (
     <div className="dashboard-container">
-      <div className="dashboard-header">
+      <header className="dashboard-header">
         <div className="logo">
-          <div className="logo-circle">DM</div>
+          <div className="logo-circle">D</div>
           <span>Deadline Manager</span>
         </div>
-        <button className="create-btn" onClick={() => navigate('/create-task')}>
-          + New Task
-        </button>
-        <button className="logout-btn" onClick={() => {
-          localStorage.removeItem('user');
-          navigate('/login');
-        }}>
-          Logout
-        </button>
-      </div>
+        <div style={{ display: 'flex', gap: '12px' }}>
+          <button className="create-btn" onClick={handleCreateTask}>Create Task</button>
+          <button className="create-btn" onClick={handleLogout}>Logout</button>
+        </div>
+      </header>
 
-      <div className="task-section">
+      <section className="task-section">
         <div className="task-section-header">
           <h1>My Tasks</h1>
-          <button className="completed-btn" onClick={() => navigate('/completed-tasks')}>
-            ✅ Completed
-          </button>
+          <button className="completed-btn">Show Completed</button>
         </div>
 
-        <TaskList
-          tasks={tasks}
-          onDeleteTask={handleDeleteTask}
-          onEditTask={handleEditTask}
-          onToggleComplete={handleToggleComplete}
-        />
-      </div>
+        <div className="task-list">
+          {tasks.length === 0 ? (
+            <p>No tasks yet. Create one!</p>
+          ) : (
+            tasks.map((task) => (
+              <div key={task._id} className="task-card">
+                <h3>{task.title}</h3>
+                <p>{task.description}</p>
+                <p><strong>Deadline:</strong> {new Date(task.deadline).toLocaleDateString()}</p>
+              </div>
+            ))
+          )}
+        </div>
+      </section>
     </div>
   );
-};
+}
 
 export default Dashboard;
